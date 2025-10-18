@@ -1,0 +1,33 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+// WiFi Configuration
+#define WIFI_SSID "YourWiFiSSID"
+#define WIFI_PASSWORD "YourWiFiPassword"
+
+// Personal Information
+#define BADGE_NAME "Your Name"
+#define BADGE_HANDLE "@yourhandle.bsky.social"
+#define BADGE_PROFILE_URL "https://yourwebsite.com"
+
+// Bluesky API Configuration
+#define BLUESKY_API_URL "https://bsky.social/xrpc/app.bsky.feed.searchPosts"
+#define BLUESKY_AUTH_URL "https://bsky.social/xrpc/com.atproto.server.createSession"
+#define BLUESKY_IDENTIFIER "yourhandle.bsky.social"  // Your Bluesky handle (without @)
+#define BLUESKY_APP_PASSWORD "your-app-password-here"  // Create at https://bsky.app/settings/app-passwords
+#define BLUESKY_SEARCH_TAG "seagl2025"  // Hashtag to search for (without #)
+#define BLUESKY_POST_LIMIT 3
+
+// Display Configuration
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 170
+#define SCREEN_DISPLAY_TIME 10000  // milliseconds per screen
+#define API_REFRESH_INTERVAL 180000  // 3 minutes in milliseconds
+
+// Screen rotation (0, 1, 2, 3)
+#define SCREEN_ROTATION 1
+
+// Transition animation duration
+#define TRANSITION_DURATION 500  // milliseconds
+
+#endif // CONFIG_H
