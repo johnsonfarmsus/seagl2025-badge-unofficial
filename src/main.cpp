@@ -12,6 +12,8 @@
 // Pin definitions
 #define PIN_POWER_ON 15
 #define PIN_LCD_BL 38
+#define PIN_BUTTON_1 0   // Boot button
+#define PIN_BUTTON_2 14  // Second button
 #define PIN_LCD_D0 39
 #define PIN_LCD_D1 40
 #define PIN_LCD_D2 41
@@ -51,6 +53,13 @@ String blueskyAuthors[3];
 int postCount = 0;
 String accessToken = "";  // Bluesky access token
 
+// Brightness control
+const uint8_t brightnessLevels[] = {26, 102, 179, 255};  // 10%, 40%, 70%, 100%
+const char* brightnessLabels[] = {"10%", "40%", "70%", "100%"};
+int currentBrightnessIndex = 3;  // Start at 100%
+unsigned long lastButtonPress = 0;
+const unsigned long buttonDebounce = 200;  // 200ms debounce
+
 // Screen timing (milliseconds)
 const unsigned long screenTimes[] = {
     3000,  // Screen 0: Welcome - 3 seconds
@@ -67,6 +76,8 @@ bool authenticateBluesky();
 void fetchBlueskyPosts();
 void showScreen(int screen);
 void screenTimerCallback(lv_timer_t * timer);
+void setBrightness(int index);
+void checkButtons();
 
 // LVGL flush callback
 static bool lvgl_flush_ready(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx) {
@@ -168,9 +179,18 @@ void setup() {
     digitalWrite(PIN_POWER_ON, HIGH);
     delay(100);
 
-    // Initialize backlight
-    pinMode(PIN_LCD_BL, OUTPUT);
-    digitalWrite(PIN_LCD_BL, HIGH);
+    // Initialize backlight with PWM
+    ledcSetup(0, 5000, 8);  // Channel 0, 5kHz, 8-bit resolution
+    ledcAttachPin(PIN_LCD_BL, 0);
+    setBrightness(currentBrightnessIndex);  // Set to initial brightness (100%)
+    Serial.print("Backlight initialized at ");
+    Serial.print(brightnessLabels[currentBrightnessIndex]);
+    Serial.println(" brightness");
+
+    // Initialize buttons
+    pinMode(PIN_BUTTON_1, INPUT_PULLUP);
+    pinMode(PIN_BUTTON_2, INPUT_PULLUP);
+    Serial.println("Buttons initialized");
 
     Serial.println("Initializing display...");
     initDisplay();
@@ -546,6 +566,9 @@ void loop() {
     lv_tick_inc(now - lastTick);
     lastTick = now;
 
+    // Check for button presses to adjust brightness
+    checkButtons();
+
     // Let LVGL handle everything including timers
     lv_timer_handler();
 
@@ -557,4 +580,36 @@ void loop() {
     }
 
     delay(5);
+}
+
+// Set backlight brightness using PWM
+void setBrightness(int index) {
+    if (index < 0 || index >= 4) return;
+    ledcWrite(0, brightnessLevels[index]);
+    currentBrightnessIndex = index;
+}
+
+// Check for button presses and cycle brightness
+void checkButtons() {
+    unsigned long now = millis();
+
+    // Debounce check
+    if (now - lastButtonPress < buttonDebounce) {
+        return;
+    }
+
+    // Check if either button is pressed (active LOW with pullup)
+    bool button1Pressed = digitalRead(PIN_BUTTON_1) == LOW;
+    bool button2Pressed = digitalRead(PIN_BUTTON_2) == LOW;
+
+    if (button1Pressed || button2Pressed) {
+        lastButtonPress = now;
+
+        // Cycle to next brightness level
+        currentBrightnessIndex = (currentBrightnessIndex + 1) % 4;
+        setBrightness(currentBrightnessIndex);
+
+        Serial.print("Brightness changed to: ");
+        Serial.println(brightnessLabels[currentBrightnessIndex]);
+    }
 }

@@ -10,6 +10,7 @@ An interactive digital conference badge for the LilyGO T-Display S3R8 (ESP32-S3)
 - **Call-to-Action**: Encourages attendees to join the conversation on Bluesky
 - **Auto-refresh**: Updates posts every 3 minutes
 - **WiFi Connectivity**: Connects automatically to configured network
+- **Adjustable Brightness**: Press either button to cycle through 4 brightness levels (10%, 40%, 70%, 100%)
 
 ## Hardware Requirements
 
@@ -200,14 +201,31 @@ At 115200 baud, you'll see:
 - Current screen being displayed
 - Any error messages
 
+## Brightness Control
+
+The badge features adjustable screen brightness to save battery or improve visibility:
+
+- **Buttons**: Press either button (GPIO 0 or GPIO 14) to cycle through brightness levels
+- **Brightness Levels**:
+  - 10% - Maximum battery life
+  - 40% - Balanced for indoor use
+  - 70% - Bright for well-lit areas
+  - 100% - Maximum visibility (default)
+- **How It Works**: Uses PWM (Pulse Width Modulation) to control the backlight LED
+- **Debouncing**: 200ms delay prevents accidental multiple presses
+
+The brightness setting persists while the badge is powered on. After a reset, it defaults to 100%.
+
 ## Power Management
 
 Tips for all-day conference use:
 - The display auto-updates every 3 minutes
 - WiFi stays connected for instant refreshes
 - Consider using a portable USB battery pack
+- **Lower brightness** to 40% or 10% for significantly longer battery life
 
 For longer battery life:
+- Press either button to reduce brightness to 40% or 10%
 - Increase `API_REFRESH_INTERVAL` (e.g., 600000 for 10 minutes)
 - Increase `SCREEN_DISPLAY_TIME` for slower screen cycling
 
