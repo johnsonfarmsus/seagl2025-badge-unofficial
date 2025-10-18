@@ -2,7 +2,7 @@
 
 An interactive digital conference badge for the LilyGO T-Display S3R8 (ESP32-S3) that displays your name, QR code, and live community posts from Bluesky using the #seagl2025 hashtag.
 
-Additional project details and 3d printed case information avilable at [Hackaday.io](https://hackaday.io/project/204270-seagl-2025-badge-unofficial).
+Additional project details and 3d printed case available at [Hackaday.io](https://hackaday.io/project/204270-seagl-2025-badge-unofficial).
 
 ## Features
 
