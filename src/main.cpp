@@ -297,7 +297,7 @@ void fetchBlueskyPosts() {
     }
 
     HTTPClient http;
-    String url = String(BLUESKY_API_URL) + "?q=%23" + String(BLUESKY_SEARCH_TAG) + "&limit=10&sort=latest";
+    String url = String(BLUESKY_API_URL) + "?q=%23" + String(BLUESKY_SEARCH_TAG) + "&limit=15&sort=latest";
 
     Serial.print("URL: ");
     Serial.println(url);
@@ -317,7 +317,7 @@ void fetchBlueskyPosts() {
         Serial.print("Response length: ");
         Serial.println(payload.length());
 
-        DynamicJsonDocument doc(20480);  // 20KB for search results
+        DynamicJsonDocument doc(40960);  // 40KB for search results (handles 15 posts)
         DeserializationError error = deserializeJson(doc, payload);
 
         if (!error) {

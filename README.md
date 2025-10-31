@@ -161,9 +161,25 @@ This workaround ensures you see the actual most recent community posts rather th
 The badge uses Bluesky's public AT Protocol API:
 - Authenticates using your app password
 - Searches for posts with the configured hashtag
+- Fetches 15 posts per request (optimized for memory and reliability)
 - Filters out official account posts
 - Displays the 3 most recent community posts
 - Refreshes every 3 minutes
+
+#### Technical Notes: Post Limit
+
+The badge is configured to fetch **15 posts** per API request, which provides a good balance between:
+
+1. **Community Post Coverage**: With 15 posts, there's a higher chance of finding 3+ community posts after filtering out @seagl.org posts (which are often promotional/schedule posts)
+
+2. **Memory Constraints**: The ESP32-S3 has limited RAM for processing JSON responses:
+   - 15 posts ≈ 33KB response
+   - 40KB JSON buffer (provides safe headroom)
+   - Uses Arduino String class for HTTP response handling
+
+3. **String Class Limitations**: The ESP32 Arduino String class has practical limitations with large string concatenation operations (>40KB), which prevented using higher limits like 20-25 posts despite having sufficient heap memory
+
+While the ESP32-S3 has ~150KB of free heap memory, the String handling performance becomes unreliable with responses larger than ~35-40KB, causing JSON parsing errors. The 15-post limit with 40KB buffer provides reliable operation while maximizing community post discovery.
 
 ### Screen Layout
 
